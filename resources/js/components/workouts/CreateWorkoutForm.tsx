@@ -15,7 +15,7 @@ interface CreateWorkout {
     name: string;
     description?: string;
     is_public?: boolean;
-    exercises?: WorkoutExercise[];
+    exercises?: CreateWorkoutExercise[];
 }
 
 interface CreateWorkoutForm extends CreateWorkout {
@@ -23,16 +23,16 @@ interface CreateWorkoutForm extends CreateWorkout {
     [key: string]: any;
 }
 
-export interface WorkoutExercise {
+export interface CreateWorkoutExercise {
     exercise_id: number;
     measurement: 'reps_only' | 'weight' | 'time' | 'distance' | 'time_or_distance';
     name: string;
     order: number;
     notes?: string;
-    sets: WorkoutSet[];
+    sets: CreateWorkoutSet[];
 }
 
-export interface WorkoutSet {
+export interface CreateWorkoutSet {
     id: string;
     order: number;
     reps?: number;
@@ -79,7 +79,7 @@ export default function CreateWorkoutForm({ exercises, muscleGroups }: Props) {
         ]);
     };
 
-    const updateSelectedExercise = (exerciseId: number, updatedExercise: Partial<WorkoutExercise>) => {
+    const updateSelectedExercise = (exerciseId: number, updatedExercise: Partial<CreateWorkoutExercise>) => {
         setData(
             'exercises',
             data.exercises?.map((ex) => {
@@ -95,12 +95,12 @@ export default function CreateWorkoutForm({ exercises, muscleGroups }: Props) {
         );
     };
 
-    const removeSelectedExercise = (exercise: WorkoutExercise) => {
+    const removeSelectedExercise = (exercise: CreateWorkoutExercise) => {
         setData('exercises', data.exercises?.filter((ex) => ex.exercise_id !== exercise.exercise_id) || []);
         setAvailableExercises((prev) => [...prev, exercises.find((ex) => ex.id === exercise.exercise_id)!]);
     };
 
-    const reSortExercises = (exercise: WorkoutExercise, oldOrder: number, newOrder: number) => {
+    const reSortExercises = (exercise: CreateWorkoutExercise, oldOrder: number, newOrder: number) => {
         setData(
             'exercises',
             data.exercises?.map((ex) => {

@@ -5,7 +5,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Exercise, MuscleGroup } from '@/types/workouts';
 import { Head, Link } from '@inertiajs/react';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -32,14 +32,14 @@ export default function CreateWorkout({ exercises, muscleGroups }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
 
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="flex flex-row items-center justify-between gap-2 px-2 pt-8 pb-2">
+            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto p-4">
+                <div className="flex flex-row items-center justify-between gap-2 px-2 pt-6 pb-2">
                     <HeadingSmall title="Create Workout" description="Add your excerises and create your workout" />
                     <div>
-                        <Button asChild size="sm">
-                            <Link href="/workouts/create">
-                                Create New Workout
-                                <ArrowUpRight />
+                        <Button asChild size="sm" variant="secondary">
+                            <Link href="/workouts">
+                                <ArrowLeft />
+                                Back To Workouts
                             </Link>
                         </Button>
                     </div>

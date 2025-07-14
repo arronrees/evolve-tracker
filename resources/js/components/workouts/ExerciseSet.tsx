@@ -3,12 +3,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { XIcon } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { WorkoutExercise, WorkoutSet } from './CreateWorkoutForm';
+import { CreateWorkoutExercise, CreateWorkoutSet } from './CreateWorkoutForm';
 
 interface Props {
-    selection: WorkoutExercise;
-    updateSelectedExercise: (exerciseId: number, updatedExercise: Partial<WorkoutExercise>) => void;
-    set: WorkoutSet;
+    selection: CreateWorkoutExercise;
+    updateSelectedExercise: (exerciseId: number, updatedExercise: Partial<CreateWorkoutExercise>) => void;
+    set: CreateWorkoutSet;
     index: number;
 }
 

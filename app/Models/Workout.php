@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Workout extends Model
 {
@@ -17,26 +19,13 @@ class Workout extends Model
         'is_public',
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function exercises()
+    public function exercises(): HasMany
     {
-        return $this->belongsToMany(Exercise::class, 'workout_exercises')
-            ->withPivot([
-                'sets',
-                'reps',
-                'weight',
-                'duration_seconds',
-                'distance',
-                'rest_seconds',
-                'order',
-                'notes'
-            ])
-            ->withTimestamps()
-            ->as('data')
-            ->orderBy('workout_exercises.order');
+        return $this->hasMany(WorkoutExercise::class)->orderBy('order');
     }
 }

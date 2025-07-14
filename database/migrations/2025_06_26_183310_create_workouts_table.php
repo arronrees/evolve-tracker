@@ -33,7 +33,8 @@ return new class extends Migration
 
             $table->string('notes')->nullable();
 
-            $table->unique(['workout_id', 'exercise_id', 'order']);
+            $table->unique(['workout_id', 'order']);
+            $table->index(['workout_id', 'order']);
         });
 
         Schema::create('workout_sets', function (Blueprint $table) {
@@ -51,6 +52,7 @@ return new class extends Migration
             $table->string('notes')->nullable();
 
             $table->unique(['workout_exercise_id', 'order']);
+            $table->index(['workout_exercise_id', 'order']);
         });
     }
 
@@ -60,5 +62,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('workouts');
+        Schema::dropIfExists('workout_exercises');
+        Schema::dropIfExists('workout_sets');
     }
 };

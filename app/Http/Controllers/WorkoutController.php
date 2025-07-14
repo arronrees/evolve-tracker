@@ -7,15 +7,22 @@ use App\Models\Exercise;
 use App\Models\MuscleGroup;
 use App\Models\Workout;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
-use Illuminate\Support\Str;
 
 class WorkoutController extends Controller
 {
     public function index()
     {
-        return Inertia::render('workouts/index');
+        $workouts = Workout::with(['exercises'])
+            ->where('user_id', Auth::id())
+            ->orderBy('created_at')
+            ->get();
+
+        return Inertia::render('workouts/index', [
+            'workouts' => $workouts,
+        ]);
     }
 
     public function create()
@@ -86,7 +93,16 @@ class WorkoutController extends Controller
 
     public function show(Workout $workout)
     {
-        //
+        $workout->load(['exercises' => function ($query) {
+            $query->with(['exercise' => function ($query) {
+                $query->with('muscleGroups');
+            }, 'sets'])
+                ->orderBy('order');
+        }]);
+
+        return Inertia::render('workouts/show', [
+            'workout' => $workout,
+        ]);
     }
 
     public function edit(Workout $workout)

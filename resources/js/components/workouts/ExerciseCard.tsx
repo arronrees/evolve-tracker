@@ -1,15 +1,15 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChevronDown, ChevronUp, XIcon } from 'lucide-react';
-import { WorkoutExercise } from './CreateWorkoutForm';
+import { CreateWorkoutExercise } from './CreateWorkoutForm';
 import ExerciseSets from './ExerciseSets';
 
 interface Props {
-    selection: WorkoutExercise;
-    removeSelectedExercise: (exercise: WorkoutExercise) => void;
-    updateSelectedExercise: (exerciseId: number, updatedExercise: Partial<WorkoutExercise>) => void;
+    selection: CreateWorkoutExercise;
+    removeSelectedExercise: (exercise: CreateWorkoutExercise) => void;
+    updateSelectedExercise: (exerciseId: number, updatedExercise: Partial<CreateWorkoutExercise>) => void;
     numberOfExercises: number;
-    reSortExercises: (exercise: WorkoutExercise, oldOrder: number, newOrder: number) => void;
+    reSortExercises: (exercise: CreateWorkoutExercise, oldOrder: number, newOrder: number) => void;
 }
 
 export default function ExerciseCard({ selection, removeSelectedExercise, updateSelectedExercise, numberOfExercises, reSortExercises }: Props) {

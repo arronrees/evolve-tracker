@@ -1,12 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { v4 as uuidv4 } from 'uuid';
-import { WorkoutExercise } from './CreateWorkoutForm';
+import { CreateWorkoutExercise } from './CreateWorkoutForm';
 import ExerciseSet from './ExerciseSet';
 
 interface Props {
-    selection: WorkoutExercise;
-    updateSelectedExercise: (exerciseId: number, updatedExercise: Partial<WorkoutExercise>) => void;
+    selection: CreateWorkoutExercise;
+    updateSelectedExercise: (exerciseId: number, updatedExercise: Partial<CreateWorkoutExercise>) => void;
 }
 
 export default function ExerciseSets({ selection, updateSelectedExercise }: Props) {

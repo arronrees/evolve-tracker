@@ -21,21 +21,4 @@ class Exercise extends Model
     {
         return $this->belongsToMany(MuscleGroup::class);
     }
-
-    public function workouts()
-    {
-        return $this->belongsToMany(Workout::class, 'workout_exercises')
-            ->withPivot([
-                'sets',
-                'reps',
-                'weight',
-                'duration_seconds',
-                'distance',
-                'rest_seconds',
-                'order',
-                'notes'
-            ])
-            ->withTimestamps()
-            ->as('data');
-    }
 }
