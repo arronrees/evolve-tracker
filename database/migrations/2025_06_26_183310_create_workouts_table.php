@@ -31,15 +31,26 @@ return new class extends Migration
 
             $table->integer('order')->default(1);
 
-            $table->string('sets')->nullable();
-            $table->string('reps')->nullable();
+            $table->string('notes')->nullable();
+
+            $table->unique(['workout_id', 'exercise_id', 'order']);
+        });
+
+        Schema::create('workout_sets', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+
+            $table->foreignId('workout_exercise_id')->constrained()->onDelete('cascade');
+
+            $table->integer('order')->default(1);
+            $table->integer('reps')->nullable();
             $table->decimal('weight')->nullable();
             $table->integer('duration_seconds')->nullable();
             $table->decimal('distance_meters')->nullable();
             $table->integer('rest_seconds')->nullable();
             $table->string('notes')->nullable();
 
-            $table->unique(['workout_id', 'exercise_id', 'order']);
+            $table->unique(['workout_exercise_id', 'order']);
         });
     }
 

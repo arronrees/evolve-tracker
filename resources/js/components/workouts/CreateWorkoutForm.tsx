@@ -1,0 +1,211 @@
+import InputError from '@/components/input-error';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Exercise, MuscleGroup } from '@/types/workouts';
+import { useForm } from '@inertiajs/react';
+import { XIcon } from 'lucide-react';
+import { FormEventHandler, useState } from 'react';
+import ExerciseCard from './ExerciseCard';
+import ExerciseSelection from './ExerciseSelection';
+
+interface CreateWorkout {
+    name: string;
+    description?: string;
+    is_public?: boolean;
+    exercises?: WorkoutExercise[];
+}
+
+interface CreateWorkoutForm extends CreateWorkout {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [key: string]: any;
+}
+
+export interface WorkoutExercise {
+    exercise_id: number;
+    measurement: 'reps_only' | 'weight' | 'time' | 'distance' | 'time_or_distance';
+    name: string;
+    order: number;
+    notes?: string;
+    sets: WorkoutSet[];
+}
+
+export interface WorkoutSet {
+    id: string;
+    order: number;
+    reps?: number;
+    weight?: number;
+    duration_seconds?: number;
+    distance_meters?: number;
+    rest_seconds?: number;
+}
+
+interface Props {
+    exercises: Exercise[];
+    muscleGroups: MuscleGroup[];
+}
+
+export default function CreateWorkoutForm({ exercises, muscleGroups }: Props) {
+    const [availableExercises, setAvailableExercises] = useState<Exercise[]>(exercises);
+
+    const { data, setData, post, errors, processing } = useForm<CreateWorkoutForm>({
+        name: '',
+        description: '',
+        is_public: false,
+        exercises: [],
+    });
+
+    const handleSubmit: FormEventHandler = (e) => {
+        e.preventDefault();
+        post(route('workouts.store'));
+    };
+
+    const removeAvailableExercise = (exerciseId: number) => {
+        setAvailableExercises((prev) => prev.filter((exercise) => exercise.id !== exerciseId));
+    };
+
+    const addSelectedExercise = (exercise: Exercise) => {
+        setData('exercises', [
+            ...(data.exercises || []),
+            {
+                exercise_id: exercise.id,
+                measurement: exercise.measurement,
+                order: (data.exercises?.length ?? 0) + 1,
+                name: exercise.name,
+                sets: [],
+            },
+        ]);
+    };
+
+    const updateSelectedExercise = (exerciseId: number, updatedExercise: Partial<WorkoutExercise>) => {
+        setData(
+            'exercises',
+            data.exercises?.map((ex) => {
+                if (ex.exercise_id === exerciseId) {
+                    return {
+                        ...ex,
+                        ...updatedExercise,
+                    };
+                }
+
+                return ex;
+            }) || [],
+        );
+    };
+
+    const removeSelectedExercise = (exercise: WorkoutExercise) => {
+        setData('exercises', data.exercises?.filter((ex) => ex.exercise_id !== exercise.exercise_id) || []);
+        setAvailableExercises((prev) => [...prev, exercises.find((ex) => ex.id === exercise.exercise_id)!]);
+    };
+
+    const reSortExercises = (exercise: WorkoutExercise, oldOrder: number, newOrder: number) => {
+        setData(
+            'exercises',
+            data.exercises?.map((ex) => {
+                // if already on lowest or highest position, return the same
+                if (newOrder < 1 || newOrder >= (data.exercises || []).length) {
+                    return ex;
+                }
+
+                // change the order of the clicked exercise
+                if (ex.exercise_id === exercise.exercise_id) {
+                    console.log('reSortExercises', ex.order, oldOrder, newOrder);
+                    return {
+                        ...ex,
+                        order: newOrder,
+                    };
+                }
+
+                // change the sort order of the exercise that was swapped with the clicked exercise
+                if (ex.order === newOrder) {
+                    return {
+                        ...ex,
+                        order: oldOrder,
+                    };
+                }
+
+                return ex;
+            }) || [],
+        );
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <Card>
+                <CardContent>
+                    <div className="space-y-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="name">Workout Name</Label>
+
+                            <Input
+                                id="name"
+                                className="mt-1 block w-full"
+                                value={data.name ?? ''}
+                                onChange={(e) => setData('name', e.target.value)}
+                                placeholder="Workout Name"
+                            />
+
+                            <InputError className="mt-2" message={errors.name} />
+                        </div>
+
+                        {data.exercises && data.exercises.length > 0 && (
+                            <div className="mb-2 flex flex-wrap gap-2">
+                                {data.exercises.map((exercise) => (
+                                    <Badge
+                                        variant="secondary"
+                                        key={exercise.exercise_id}
+                                        className="flex cursor-pointer gap-1"
+                                        onClick={() => removeSelectedExercise(exercise)}
+                                    >
+                                        {exercise.name}
+                                        <XIcon className="h-3 w-3" />
+                                    </Badge>
+                                ))}
+                            </div>
+                        )}
+
+                        <ExerciseSelection
+                            removeAvailableExercise={removeAvailableExercise}
+                            muscleGroups={muscleGroups}
+                            addSelectedExercise={addSelectedExercise}
+                            availableExercises={availableExercises}
+                        />
+                    </div>
+                </CardContent>
+            </Card>
+
+            {data.exercises && data.exercises.length > 0 && (
+                <Card>
+                    <CardContent>
+                        <div className="flex flex-col gap-4">
+                            {data.exercises
+                                .sort((a, b) => a.order - b.order)
+                                .map((selection) => (
+                                    <ExerciseCard
+                                        key={selection.exercise_id}
+                                        selection={selection}
+                                        removeSelectedExercise={removeSelectedExercise}
+                                        updateSelectedExercise={updateSelectedExercise}
+                                        numberOfExercises={data.exercises?.length ?? 0}
+                                        reSortExercises={reSortExercises}
+                                    />
+                                ))}
+                        </div>
+                    </CardContent>
+                    <CardFooter>
+                        <div className="space-y-4">
+                            {errors && Object.keys(errors).length > 0 && (
+                                <p className="text-sm text-red-600">There was an error with your submission. Please check the form for errors.</p>
+                            )}
+                            <div>
+                                <Button disabled={processing}>Create</Button>
+                            </div>
+                        </div>
+                    </CardFooter>
+                </Card>
+            )}
+        </form>
+    );
+}

@@ -12,6 +12,11 @@ class Exercise extends Model
 
     protected $fillable = ['name', 'description', 'measurement'];
 
+    public function getMuscleGroupsAttribute()
+    {
+        return $this->muscleGroups()->get();
+    }
+
     public function muscleGroups()
     {
         return $this->belongsToMany(MuscleGroup::class);
