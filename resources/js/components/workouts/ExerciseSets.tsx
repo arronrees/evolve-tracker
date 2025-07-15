@@ -1,15 +1,16 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { FormWorkoutExercise } from '@/types/workouts';
+import { FormWorkoutExercise, Workout } from '@/types/workouts';
 import { v4 as uuidv4 } from 'uuid';
 import ExerciseSet from './ExerciseSet';
 
 interface Props {
     selection: FormWorkoutExercise;
     updateSelectedExercise: (exerciseId: number, updatedExercise: Partial<FormWorkoutExercise>) => void;
+    workout?: Workout;
 }
 
-export default function ExerciseSets({ selection, updateSelectedExercise }: Props) {
+export default function ExerciseSets({ selection, updateSelectedExercise, workout }: Props) {
     const addSet = () => {
         updateSelectedExercise(selection.exercise_id, {
             sets: [...selection.sets, { id: uuidv4(), order: (selection.sets[selection.sets.length - 1]?.order ?? 0) + 1 }],
@@ -22,7 +23,16 @@ export default function ExerciseSets({ selection, updateSelectedExercise }: Prop
                 <div className="flex flex-col gap-4">
                     {selection.sets && selection.sets.length > 0 ? (
                         selection.sets.map((set, index: number) => (
-                            <ExerciseSet key={set.id} set={set} index={index} updateSelectedExercise={updateSelectedExercise} selection={selection} />
+                            <ExerciseSet
+                                key={set.id}
+                                set={set}
+                                index={index}
+                                updateSelectedExercise={updateSelectedExercise}
+                                selection={selection}
+                                targetSet={workout?.exercises
+                                    ?.find((ex) => ex.exercise_id === selection.exercise_id)
+                                    ?.sets.find((s) => s.id === Number(set.id))}
+                            />
                         ))
                     ) : (
                         <p className="text-sm font-medium text-muted-foreground">No sets created</p>

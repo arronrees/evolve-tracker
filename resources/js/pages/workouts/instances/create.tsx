@@ -1,9 +1,10 @@
 import HeadingSmall from '@/components/heading-small';
 import { Button } from '@/components/ui/button';
-import CreateWorkoutForm from '@/components/workouts/CreateWorkoutForm';
+import RecordWorkoutForm from '@/components/workouts/RecordWorkoutForm';
 import AppLayout from '@/layouts/app-layout';
+import { mapBreadcrumbs } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
-import { Exercise, MuscleGroup } from '@/types/workouts';
+import { Exercise, MuscleGroup, Workout } from '@/types/workouts';
 import { Head, Link } from '@inertiajs/react';
 import { ArrowLeft } from 'lucide-react';
 
@@ -17,35 +18,42 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/workouts',
     },
     {
-        title: 'Create Workout',
-        href: '/workouts/create',
+        title: '{name}',
+        href: '/workouts/{id}',
+    },
+    {
+        title: 'Record Workout',
+        href: '/workouts/{workout}/start',
     },
 ];
 
 interface Props {
+    workout: Workout;
     exercises: Exercise[];
     muscleGroups: MuscleGroup[];
 }
 
-export default function CreateWorkout({ exercises, muscleGroups }: Props) {
+export default function StartWorkout({ workout, exercises, muscleGroups }: Props) {
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Create Workout" />
+        <AppLayout
+            breadcrumbs={mapBreadcrumbs(breadcrumbs, [{ find: '{id}', replace: workout.id.toString() }], [{ find: '{name}', replace: workout.name }])}
+        >
+            <Head title="Record Workout" />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto p-4">
                 <div className="flex flex-row items-center justify-between gap-2 px-2 pt-6 pb-2">
-                    <HeadingSmall title="Create Workout" description="Add your excerises and create your workout" />
+                    <HeadingSmall title="Record Workout" description="Add your sets and reps and save your progress." />
                     <div>
                         <Button asChild size="sm" variant="secondary">
-                            <Link href="/workouts">
+                            <Link href={`/workouts/${workout.id}`}>
                                 <ArrowLeft />
-                                Back To Workouts
+                                Back To Workout
                             </Link>
                         </Button>
                     </div>
                 </div>
 
-                <CreateWorkoutForm exercises={exercises} muscleGroups={muscleGroups} />
+                <RecordWorkoutForm exercises={exercises} muscleGroups={muscleGroups} workout={workout} />
             </div>
         </AppLayout>
     );

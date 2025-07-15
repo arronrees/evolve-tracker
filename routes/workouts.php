@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\WorkoutController;
+use App\Http\Controllers\WorkoutInstanceController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -12,4 +13,9 @@ Route::middleware('auth')->group(function () {
   Route::get('workouts/{workout}/edit', [WorkoutController::class, 'edit'])->name('workouts.edit');
   Route::put('workouts/{workout}', [WorkoutController::class, 'update'])->name('workouts.update');
   Route::delete('workouts/{workout}', [WorkoutController::class, 'destroy'])->name('workouts.destroy');
+});
+
+Route::middleware('auth')->group(function () {
+  Route::get('workouts/{workout}/start', [WorkoutInstanceController::class, 'create'])->name('workouts.instances.create');
+  Route::post('workouts/{workout}/start', [WorkoutInstanceController::class, 'store'])->name('workouts.instances.store');
 });

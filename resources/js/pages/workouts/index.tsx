@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { Workout, type BreadcrumbItem } from '@/types';
+import { type BreadcrumbItem } from '@/types';
+import { Workout } from '@/types/workouts';
 import { Head, Link } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -61,7 +62,7 @@ export default function Workouts({ workouts }: Props) {
                                                         <Link href={`/workouts/${workout.id}`}>View</Link>
                                                     </Button>
                                                     <Button asChild size="sm">
-                                                        <Link href={`/workouts/${workout.id}/record`}>Start</Link>
+                                                        <Link href={`/workouts/${workout.id}/start`}>Start</Link>
                                                     </Button>
                                                 </div>
                                             </TableCell>

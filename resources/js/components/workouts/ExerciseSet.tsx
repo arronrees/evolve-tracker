@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { FormWorkoutExercise, FormWorkoutSet } from '@/types/workouts';
+import { FormWorkoutExercise, FormWorkoutSet, WorkoutExerciseSet } from '@/types/workouts';
 import { XIcon } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -10,6 +10,7 @@ interface Props {
     updateSelectedExercise: (exerciseId: number, updatedExercise: Partial<FormWorkoutExercise>) => void;
     set: FormWorkoutSet;
     index: number;
+    targetSet?: WorkoutExerciseSet;
 }
 
 function validateNumber(value: string) {
@@ -20,7 +21,7 @@ function validateNumber(value: string) {
     return 0;
 }
 
-export default function ExerciseSet({ set, index, updateSelectedExercise, selection }: Props) {
+export default function ExerciseSet({ set, index, updateSelectedExercise, selection, targetSet }: Props) {
     function updateSetReps(reps: string) {
         updateSelectedExercise(selection.exercise_id, {
             sets: selection.sets.map((s) => {
@@ -77,14 +78,34 @@ export default function ExerciseSet({ set, index, updateSelectedExercise, select
         updateSelectedExercise(selection.exercise_id, { sets: selection.sets.filter((s) => s.id !== set.id) });
     }
 
+    const minutesTarget = targetSet?.duration_seconds ? `Target: ${Math.floor((targetSet?.duration_seconds ?? 0) / 60)}` : '';
+    const secondsTarget = targetSet?.duration_seconds ? `Target: ${(targetSet?.duration_seconds ?? 0) % 60}` : '';
+    const distanceTarget = targetSet?.distance_meters ? `Target: ${targetSet?.distance_meters || ''}` : '';
+    const repsTarget = `Target: ${targetSet?.reps || ''}`;
+    const weightTarget = `Target: ${targetSet?.weight || ''}`;
+
     return (
         <div>
             <p className="mb-1 font-semibold">Set {index + 1}</p>
             <div className="flex items-end gap-2">
-                {selection.measurement === 'time' && <TimeInput updateSetTime={updateSetTime} time={set.duration_seconds} />}
-                {selection.measurement === 'reps_only' && <RepsInput updateSetReps={updateSetReps} reps={set.reps} />}
+                {selection.measurement === 'time' && (
+                    <TimeInput
+                        updateSetTime={updateSetTime}
+                        time={set.duration_seconds}
+                        timeMinutesTarget={minutesTarget}
+                        timeSecondsTarget={secondsTarget}
+                    />
+                )}
+                {selection.measurement === 'reps_only' && <RepsInput updateSetReps={updateSetReps} reps={set.reps} targetReps={repsTarget} />}
                 {selection.measurement === 'weight' && (
-                    <WeightInput updateSetWeight={updateSetWeight} updateSetReps={updateSetReps} weight={set.weight} reps={set.reps} />
+                    <WeightInput
+                        updateSetWeight={updateSetWeight}
+                        updateSetReps={updateSetReps}
+                        weight={set.weight}
+                        reps={set.reps}
+                        targetReps={repsTarget}
+                        targetWeight={weightTarget}
+                    />
                 )}
                 {selection.measurement === 'time_or_distance' && (
                     <TimeOrDistanceInput
@@ -92,9 +113,14 @@ export default function ExerciseSet({ set, index, updateSelectedExercise, select
                         updateSetDistance={updateSetDistance}
                         distance={set.distance_meters}
                         time={set.duration_seconds}
+                        distanceTarget={distanceTarget}
+                        timeMinutesTarget={minutesTarget}
+                        timeSecondsTarget={secondsTarget}
                     />
                 )}
-                {selection.measurement === 'distance' && <DistanceInput updateSetDistance={updateSetDistance} distance={set.distance_meters} />}
+                {selection.measurement === 'distance' && (
+                    <DistanceInput updateSetDistance={updateSetDistance} distance={set.distance_meters} distanceTarget={distanceTarget} />
+                )}
                 <Button variant="ghost" className="max-w-max p-2" type="button" onClick={() => removeSet()}>
                     <XIcon className="h-3 w-3" />
                 </Button>
@@ -103,7 +129,17 @@ export default function ExerciseSet({ set, index, updateSelectedExercise, select
     );
 }
 
-function TimeInput({ updateSetTime, time }: { updateSetTime: (time: string) => void; time?: number | string }) {
+function TimeInput({
+    updateSetTime,
+    time,
+    timeSecondsTarget,
+    timeMinutesTarget,
+}: {
+    updateSetTime: (time: string) => void;
+    time?: number | string;
+    timeSecondsTarget?: string;
+    timeMinutesTarget?: string;
+}) {
     const totalSeconds = time ? Number(time) : null;
     const [timeMinutes, setTimeMinutes] = useState<number | ''>(totalSeconds ? Math.floor(totalSeconds / 60) : '');
     const [timeSeconds, setTimeSeconds] = useState<number | ''>(totalSeconds ? totalSeconds % 60 : '');
@@ -164,7 +200,7 @@ function TimeInput({ updateSetTime, time }: { updateSetTime: (time: string) => v
                     </Label>
                     <Input
                         type="number"
-                        placeholder="Minutes"
+                        placeholder={timeMinutesTarget || 'Minutes'}
                         name="time_minutes"
                         id="time_minutes"
                         min={0}
@@ -180,7 +216,7 @@ function TimeInput({ updateSetTime, time }: { updateSetTime: (time: string) => v
                     </Label>
                     <Input
                         type="number"
-                        placeholder="Seconds"
+                        placeholder={timeSecondsTarget || 'Seconds'}
                         name="time_seconds"
                         id="time_seconds"
                         min={0}
@@ -195,7 +231,7 @@ function TimeInput({ updateSetTime, time }: { updateSetTime: (time: string) => v
     );
 }
 
-function RepsInput({ updateSetReps, reps }: { updateSetReps: (reps: string) => void; reps?: number | string }) {
+function RepsInput({ updateSetReps, reps, targetReps }: { updateSetReps: (reps: string) => void; reps?: number | string; targetReps?: string }) {
     return (
         <div className="flex w-full flex-col gap-1">
             <Label htmlFor="reps" className="text-xs text-muted-foreground">
@@ -203,7 +239,7 @@ function RepsInput({ updateSetReps, reps }: { updateSetReps: (reps: string) => v
             </Label>
             <Input
                 type="number"
-                placeholder="Reps"
+                placeholder={targetReps || 'Reps'}
                 name="reps"
                 min={0}
                 step={0.1}
@@ -222,34 +258,24 @@ function WeightInput({
     updateSetReps,
     reps,
     weight,
+    targetReps,
+    targetWeight,
 }: {
     updateSetWeight: (weight: string) => void;
     updateSetReps: (reps: string) => void;
     reps?: number | string;
     weight?: number | string;
+    targetReps?: string | string;
+    targetWeight?: string | string;
 }) {
     return (
         <>
-            <div className="flex w-full flex-col gap-1">
-                <Label className="text-xs text-muted-foreground">Reps</Label>
-                <Input
-                    type="number"
-                    placeholder="Reps"
-                    name="reps"
-                    min={0}
-                    step={0.1}
-                    defaultValue={reps}
-                    onChange={(e) => {
-                        updateSetReps(e.target.value);
-                    }}
-                    autoFocus
-                />
-            </div>
+            <RepsInput updateSetReps={updateSetReps} reps={reps} targetReps={targetReps} />
             <div className="flex w-full flex-col gap-1">
                 <Label className="text-xs text-muted-foreground">Weight (kg)</Label>
                 <Input
                     type="number"
-                    placeholder="Weight (kg)"
+                    placeholder={targetWeight || 'Weight (kg)'}
                     name="weight"
                     min={0}
                     step={0.1}
@@ -268,47 +294,43 @@ function TimeOrDistanceInput({
     updateSetDistance,
     distance,
     time,
+    timeSecondsTarget,
+    timeMinutesTarget,
+    distanceTarget,
 }: {
     updateSetTime: (time: string) => void;
     updateSetDistance: (distance: string) => void;
     distance?: number | string;
     time?: number | string;
+    timeSecondsTarget?: string;
+    timeMinutesTarget?: string;
+    distanceTarget?: string;
 }) {
     return (
         <>
-            {!time && (
-                <div className="flex w-full flex-col gap-1">
-                    <Label className="text-xs text-muted-foreground">Distance (meters)</Label>
-                    <Input
-                        type="number"
-                        placeholder="Distance (meters)"
-                        name="distance"
-                        min={0}
-                        step={1}
-                        defaultValue={distance}
-                        onChange={(e) => {
-                            updateSetDistance(e.target.value);
-                        }}
-                        autoFocus
-                    />
-                </div>
-            )}
+            {!time && <DistanceInput updateSetDistance={updateSetDistance} distance={distance} distanceTarget={distanceTarget} />}
             {!distance && (
-                <div className="flex w-full flex-col gap-1">
-                    <TimeInput updateSetTime={updateSetTime} time={time} />
-                </div>
+                <TimeInput updateSetTime={updateSetTime} time={time} timeSecondsTarget={timeSecondsTarget} timeMinutesTarget={timeMinutesTarget} />
             )}
         </>
     );
 }
 
-function DistanceInput({ updateSetDistance, distance }: { updateSetDistance: (distance: string) => void; distance?: number | string }) {
+function DistanceInput({
+    updateSetDistance,
+    distance,
+    distanceTarget,
+}: {
+    updateSetDistance: (distance: string) => void;
+    distance?: number | string;
+    distanceTarget?: string;
+}) {
     return (
         <div className="flex w-full flex-col gap-1">
             <Label className="text-xs text-muted-foreground">Distance (meters)</Label>
             <Input
                 type="number"
-                placeholder="Distance (meters)"
+                placeholder={distanceTarget || 'Distance (meters)'}
                 name="distance"
                 min={0}
                 step={0.1}

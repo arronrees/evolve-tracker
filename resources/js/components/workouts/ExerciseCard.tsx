@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { CardDescription, CardTitle } from '@/components/ui/card';
-import { FormWorkoutExercise } from '@/types/workouts';
+import { FormWorkoutExercise, Workout } from '@/types/workouts';
 import { ChevronDown, ChevronUp, XIcon } from 'lucide-react';
 import ExerciseSets from './ExerciseSets';
 
@@ -10,9 +10,17 @@ interface Props {
     updateSelectedExercise: (exerciseId: number, updatedExercise: Partial<FormWorkoutExercise>) => void;
     numberOfExercises: number;
     reSortExercises: (exercise: FormWorkoutExercise, oldOrder: number, newOrder: number) => void;
+    workout?: Workout;
 }
 
-export default function ExerciseCard({ selection, removeSelectedExercise, updateSelectedExercise, numberOfExercises, reSortExercises }: Props) {
+export default function ExerciseCard({
+    selection,
+    removeSelectedExercise,
+    updateSelectedExercise,
+    numberOfExercises,
+    reSortExercises,
+    workout,
+}: Props) {
     return (
         <div className="gap-4">
             <div className="flex items-end justify-between gap-2 p-2">
@@ -48,7 +56,7 @@ export default function ExerciseCard({ selection, removeSelectedExercise, update
                 </div>
             </div>
 
-            <ExerciseSets selection={selection} updateSelectedExercise={updateSelectedExercise} />
+            <ExerciseSets selection={selection} updateSelectedExercise={updateSelectedExercise} workout={workout} />
 
             <Button
                 variant="ghost"
