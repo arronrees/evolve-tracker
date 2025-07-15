@@ -1,5 +1,6 @@
 import HeadingSmall from '@/components/heading-small';
 import { Button } from '@/components/ui/button';
+import DeleteWorkout from '@/components/workouts/DeleteWorkout';
 import EditWorkoutForm from '@/components/workouts/EditWorkoutForm';
 import AppLayout from '@/layouts/app-layout';
 import { mapBreadcrumbs } from '@/lib/utils';
@@ -43,7 +44,8 @@ export default function EditWorkout({ workout, exercises, muscleGroups }: Props)
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto p-4">
                 <div className="flex flex-row items-center justify-between gap-2 px-2 pt-6 pb-2">
                     <HeadingSmall title={`Edit Workout - ${workout.name}`} description="Update your workout" />
-                    <div>
+                    <div className="flex items-center gap-2">
+                        <DeleteWorkout workoutId={workout.id} />
                         <Button asChild size="sm" variant="secondary">
                             <Link href={`/workouts/${workout.id}`}>
                                 <ArrowLeft />

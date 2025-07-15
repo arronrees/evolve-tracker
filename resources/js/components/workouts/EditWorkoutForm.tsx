@@ -33,7 +33,6 @@ export default function EditWorkoutForm({ workout, exercises, muscleGroups }: Pr
     const [availableExercises, setAvailableExercises] = useState<Exercise[]>(
         exercises.filter((ex) => !workout.exercises?.some((we) => we.exercise_id === ex.id)),
     );
-    console.log(workout);
 
     const { data, setData, put, errors, processing } = useForm<EditWorkoutForm>({
         name: workout.name,

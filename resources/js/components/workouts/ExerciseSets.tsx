@@ -17,7 +17,7 @@ export default function ExerciseSets({ selection, updateSelectedExercise }: Prop
     };
 
     return (
-        <Card className="bg-slate-50/60">
+        <Card className="bg-slate-50/60 dark:bg-neutral-900/50">
             <CardContent>
                 <div className="flex flex-col gap-4">
                     {selection.sets && selection.sets.length > 0 ? (
