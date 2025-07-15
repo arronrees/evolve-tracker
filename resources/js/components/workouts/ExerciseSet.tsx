@@ -1,14 +1,14 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { FormWorkoutExercise, FormWorkoutSet } from '@/types/workouts';
 import { XIcon } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { CreateWorkoutExercise, CreateWorkoutSet } from './CreateWorkoutForm';
 
 interface Props {
-    selection: CreateWorkoutExercise;
-    updateSelectedExercise: (exerciseId: number, updatedExercise: Partial<CreateWorkoutExercise>) => void;
-    set: CreateWorkoutSet;
+    selection: FormWorkoutExercise;
+    updateSelectedExercise: (exerciseId: number, updatedExercise: Partial<FormWorkoutExercise>) => void;
+    set: FormWorkoutSet;
     index: number;
 }
 

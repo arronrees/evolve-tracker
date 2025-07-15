@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateWorkoutRequest;
+use App\Http\Requests\UpdateWorkoutRequest;
 use App\Models\Exercise;
 use App\Models\MuscleGroup;
 use App\Models\Workout;
@@ -88,7 +89,7 @@ class WorkoutController extends Controller
             }
         });
 
-        return redirect()->route('workouts')->with('success', 'Workout created successfully.');
+        return redirect()->route('workouts');
     }
 
     public function show(Workout $workout)
@@ -107,12 +108,80 @@ class WorkoutController extends Controller
 
     public function edit(Workout $workout)
     {
-        //
+        $workout->load(['exercises' => function ($query) {
+            $query->with(['exercise' => function ($query) {
+                $query->with('muscleGroups');
+            }, 'sets'])
+                ->orderBy('order');
+        }]);
+
+        $exercises = Exercise::with('muscleGroups')->get();
+        $muscleGroups = MuscleGroup::get();
+
+        return Inertia::render('workouts/edit', [
+            'workout' => $workout,
+            'exercises' => $exercises,
+            'muscleGroups' => $muscleGroups,
+        ]);
     }
 
-    public function update(Request $request, Workout $workout)
+    public function update(UpdateWorkoutRequest $request, Workout $workout)
     {
-        //
+        $validated = $request->validated();
+
+        DB::transaction(function () use ($validated, $workout) {
+            $workout->update([
+                'name' => $validated['name'],
+                'description' => $validated['description'] ?? null,
+                'is_public' => $validated['is_public'] ?? false,
+            ]);
+
+            $workout->exercises()->delete();
+
+            if (!empty($validated['exercises'])) {
+                $exercisesData = [];
+
+                foreach ($validated['exercises'] as $exerciseData) {
+                    $exercisesData[] = [
+                        'workout_id' => $workout->id,
+                        'exercise_id' => $exerciseData['exercise_id'],
+                        'order' => $exerciseData['order'],
+                        'notes' => $exerciseData['notes'] ?? null,
+                    ];
+                }
+
+                DB::table('workout_exercises')->insert($exercisesData);
+
+                $insertedExercises = DB::table('workout_exercises')
+                    ->where('workout_id', $workout->id)
+                    ->orderBy('order')
+                    ->get();
+
+                $setsData = [];
+
+                foreach ($validated['exercises'] as $index => $exerciseData) {
+                    $exerciseId = $insertedExercises[$index]->id;
+
+                    foreach ($exerciseData['sets'] as $setData) {
+                        $setsData[] = [
+                            'workout_exercise_id' => $exerciseId,
+                            'order' => $setData['order'],
+                            'reps' => $setData['reps'] ?? null,
+                            'weight' => $setData['weight'] ?? null,
+                            'duration_seconds' => $setData['duration_seconds'] ?? null,
+                            'distance_meters' => $setData['distance_meters'] ?? null,
+                            'rest_seconds' => $setData['rest_seconds'] ?? null,
+                        ];
+                    }
+                }
+
+                if (!empty($setsData)) {
+                    DB::table('workout_sets')->insert($setsData);
+                }
+            }
+        });
+
+        return redirect()->route('workouts.show', ['workout' => $workout->id]);
     }
 
     public function destroy(Workout $workout)

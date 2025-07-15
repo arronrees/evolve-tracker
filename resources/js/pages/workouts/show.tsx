@@ -14,6 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
+import { mapBreadcrumbs } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import { Workout, WorkoutExercise, WorkoutExerciseSet } from '@/types/workouts';
 import { Head, Link } from '@inertiajs/react';
@@ -28,6 +29,10 @@ const breadcrumbs: BreadcrumbItem[] = [
         title: 'Workouts',
         href: '/workouts',
     },
+    {
+        title: '{name}',
+        href: '/workouts/{id}',
+    },
 ];
 
 interface Props {
@@ -36,14 +41,16 @@ interface Props {
 
 export default function Workouts({ workout }: Props) {
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Dashboard" />
+        <AppLayout
+            breadcrumbs={mapBreadcrumbs(breadcrumbs, [{ find: '{id}', replace: workout.id.toString() }], [{ find: '{name}', replace: workout.name }])}
+        >
+            <Head title={workout.name} />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto p-4">
                 <div className="flex items-center justify-between gap-2 px-2 pt-6 pb-2">
                     <HeadingSmall title={workout.name} description={workout.description ?? ''} />
                     <div className="flex items-center gap-2">
                         <Button asChild size="sm" variant="secondary">
-                            <Link href="/workouts/create">Edit</Link>
+                            <Link href={`/workouts/${workout.id}/edit`}>Edit</Link>
                         </Button>
                         <Button asChild size="sm">
                             <Link href={`/workouts/${workout.id}/start`}>

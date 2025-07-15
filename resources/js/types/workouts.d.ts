@@ -52,3 +52,22 @@ interface WorkoutExerciseSet {
     rest_seconds: number | null;
     notes: string | null;
 }
+
+export interface FormWorkoutExercise {
+    exercise_id: number;
+    measurement: 'reps_only' | 'weight' | 'time' | 'distance' | 'time_or_distance';
+    name: string;
+    order: number;
+    notes?: string;
+    sets: FormWorkoutSet[];
+}
+
+export interface FormWorkoutSet {
+    id: string;
+    order: number;
+    reps?: number;
+    weight?: number;
+    duration_seconds?: number;
+    distance_meters?: number;
+    rest_seconds?: number;
+}

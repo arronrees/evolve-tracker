@@ -4,43 +4,62 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Exercise, FormWorkoutExercise, MuscleGroup } from '@/types/workouts';
+import { Exercise, FormWorkoutExercise, MuscleGroup, Workout } from '@/types/workouts';
 import { useForm } from '@inertiajs/react';
 import { XIcon } from 'lucide-react';
 import { FormEventHandler, useState } from 'react';
 import ExerciseCard from './ExerciseCard';
 import ExerciseSelection from './ExerciseSelection';
 
-interface CreateWorkout {
+interface EditWorkout {
     name: string;
     description?: string;
     is_public?: boolean;
     exercises?: FormWorkoutExercise[];
 }
 
-export interface CreateWorkoutForm extends CreateWorkout {
+export interface EditWorkoutForm extends EditWorkout {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
 }
 
 interface Props {
+    workout: Workout;
     exercises: Exercise[];
     muscleGroups: MuscleGroup[];
 }
 
-export default function CreateWorkoutForm({ exercises, muscleGroups }: Props) {
-    const [availableExercises, setAvailableExercises] = useState<Exercise[]>(exercises);
+export default function EditWorkoutForm({ workout, exercises, muscleGroups }: Props) {
+    const [availableExercises, setAvailableExercises] = useState<Exercise[]>(
+        exercises.filter((ex) => !workout.exercises?.some((we) => we.exercise_id === ex.id)),
+    );
+    console.log(workout);
 
-    const { data, setData, post, errors, processing } = useForm<CreateWorkoutForm>({
-        name: '',
-        description: '',
-        is_public: false,
-        exercises: [],
+    const { data, setData, put, errors, processing } = useForm<EditWorkoutForm>({
+        name: workout.name,
+        description: workout.description || '',
+        is_public: workout.is_public,
+        exercises: workout.exercises.map((exercise) => ({
+            exercise_id: exercise.exercise_id,
+            measurement: exercise.exercise.measurement,
+            name: exercise.exercise.name,
+            order: exercise.order,
+            notes: exercise.notes ?? undefined,
+            sets: exercise.sets.map((set) => ({
+                id: set.id.toString(),
+                order: set.order,
+                reps: set.reps ?? undefined,
+                weight: set.weight ?? undefined,
+                duration_seconds: set.duration_seconds ?? undefined,
+                distance_meters: set.distance_meters ?? undefined,
+                rest_seconds: set.rest_seconds ?? undefined,
+            })),
+        })),
     });
 
     const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(route('workouts.store'));
+        put(route('workouts.update', workout.id));
     };
 
     const removeAvailableExercise = (exerciseId: number) => {
@@ -176,12 +195,14 @@ export default function CreateWorkoutForm({ exercises, muscleGroups }: Props) {
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <div className="space-y-4">
+                        <div className="w-full space-y-4 border-t border-gray-200 pt-4">
                             {errors && Object.keys(errors).length > 0 && (
                                 <p className="text-sm text-red-600">There was an error with your submission. Please check the form for errors.</p>
                             )}
                             <div>
-                                <Button disabled={processing}>Create</Button>
+                                <Button disabled={processing} type="submit">
+                                    Save
+                                </Button>
                             </div>
                         </div>
                     </CardFooter>

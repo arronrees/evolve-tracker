@@ -19,6 +19,13 @@ class Workout extends Model
         'is_public',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'is_public' => 'boolean',
+        ];
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
