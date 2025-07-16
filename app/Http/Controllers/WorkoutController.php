@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateWorkoutRequest;
 use App\Models\Exercise;
 use App\Models\MuscleGroup;
 use App\Models\Workout;
+use App\Models\WorkoutInstance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -14,15 +15,30 @@ use Inertia\Inertia;
 
 class WorkoutController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $workouts = Workout::with(['exercises'])
             ->where('user_id', Auth::id())
             ->orderBy('created_at')
             ->get();
 
+        $instances = WorkoutInstance::where('user_id', $request->user()->id)
+            ->with([
+                'workout',
+                'exercises' => function ($query) {
+                    $query->with(['exercise' => function ($query) {
+                        $query->with('muscleGroups');
+                    }, 'sets'])
+                        ->orderBy('order');
+                }
+            ])
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+
         return Inertia::render('workouts/index', [
             'workouts' => $workouts,
+            'instances' => $instances,
         ]);
     }
 
@@ -94,12 +110,24 @@ class WorkoutController extends Controller
 
     public function show(Workout $workout)
     {
-        $workout->load(['exercises' => function ($query) {
-            $query->with(['exercise' => function ($query) {
-                $query->with('muscleGroups');
-            }, 'sets'])
-                ->orderBy('order');
-        }]);
+        $workout->load([
+            'exercises' => function ($query) {
+                $query->with([
+                    'exercise' => function ($query) {
+                        $query->with('muscleGroups');
+                    },
+                    'sets'
+                ])
+                    ->orderBy('order');
+            },
+            'instances' => function ($query) {
+                $query->with([
+                    'exercises' => function ($query) {
+                        $query->with(['sets', 'exercise']);
+                    }
+                ])->orderBy('created_at', 'desc')->take(10);
+            }
+        ]);
 
         return Inertia::render('workouts/show', [
             'workout' => $workout,

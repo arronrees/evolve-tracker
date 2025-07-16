@@ -174,7 +174,7 @@ export default function RecordWorkoutForm({ workout, exercises, muscleGroups }: 
                                 <p className="text-sm text-red-600">There was an error with your submission. Please check the form for errors.</p>
                             )}
                             <div>
-                                <Button disabled={processing}>Create</Button>
+                                <Button disabled={processing}>Finish Workout</Button>
                             </div>
                         </div>
                     </CardFooter>

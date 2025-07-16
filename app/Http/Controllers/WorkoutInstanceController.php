@@ -13,6 +13,43 @@ use Inertia\Inertia;
 
 class WorkoutInstanceController extends Controller
 {
+    public function single(Request $request, Workout $workout)
+    {
+        $instances = WorkoutInstance::where('workout_id', $workout->id)
+            ->where('user_id', $request->user()->id)
+            ->with([
+                'workout',
+                'exercises' => function ($query) {
+                    $query->with(['exercise' => function ($query) {
+                        $query->with('muscleGroups');
+                    }, 'sets'])
+                        ->orderBy('order');
+                }
+            ])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return Inertia::render('workouts/instances/single', ['workout' => $workout, 'instances' => $instances]);
+    }
+
+    public function index(Request $request)
+    {
+        $instances = WorkoutInstance::where('user_id', $request->user()->id)
+            ->with([
+                'workout',
+                'exercises' => function ($query) {
+                    $query->with(['exercise' => function ($query) {
+                        $query->with('muscleGroups');
+                    }, 'sets'])
+                        ->orderBy('order');
+                }
+            ])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return Inertia::render('workouts/instances/index', ['instances' => $instances]);
+    }
+
     public function create(Workout $workout)
     {
         $exercises = Exercise::with('muscleGroups')->get();
@@ -79,5 +116,20 @@ class WorkoutInstanceController extends Controller
         });
 
         return redirect()->route('workouts');
+    }
+
+    public function show(Workout $workout, WorkoutInstance $workout_instance)
+    {
+        $workout_instance->load([
+            'workout',
+            'exercises' => function ($query) {
+                $query->with(['exercise' => function ($query) {
+                    $query->with('muscleGroups');
+                }, 'sets'])
+                    ->orderBy('order');
+            }
+        ]);
+
+        return Inertia::render('workouts/instances/show', ['workout' => $workout, 'instance' => $workout_instance]);
     }
 }

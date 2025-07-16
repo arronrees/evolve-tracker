@@ -2,9 +2,10 @@ import HeadingSmall from '@/components/heading-small';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import WorkoutHistoryTable from '@/components/workouts/WorkoutHistoryTable';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Workout } from '@/types/workouts';
+import { Workout, WorkoutInstance } from '@/types/workouts';
 import { Head, Link } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -20,12 +21,14 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface Props {
     workouts: Workout[];
+    instances: WorkoutInstance[];
 }
 
-export default function Workouts({ workouts }: Props) {
+export default function Workouts({ workouts, instances }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Dashboard" />
+            <Head title="My Workouts" />
+
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto p-4">
                 <div className="flex flex-row items-center justify-between gap-2 px-2 pt-6 pb-2">
                     <HeadingSmall title="My Workouts" description="A list of workouts you have created." />
@@ -58,7 +61,7 @@ export default function Workouts({ workouts }: Props) {
                                                     <Button asChild variant="ghost" size="sm">
                                                         <Link href={`/workouts/${workout.id}/edit`}>Edit</Link>
                                                     </Button>
-                                                    <Button asChild variant="outline">
+                                                    <Button asChild variant="outline" size="sm">
                                                         <Link href={`/workouts/${workout.id}`}>View</Link>
                                                     </Button>
                                                     <Button asChild size="sm">
@@ -70,6 +73,20 @@ export default function Workouts({ workouts }: Props) {
                                     ))}
                             </TableBody>
                         </Table>
+                    </CardContent>
+                </Card>
+
+                <div className="flex flex-row items-center justify-between gap-2 px-2 pt-6 pb-2">
+                    <HeadingSmall title="Workout History" description="A list of workouts you have completed recently." />
+                    <div>
+                        <Button asChild size="sm">
+                            <Link href="/workouts/history">View All</Link>
+                        </Button>
+                    </div>
+                </div>
+                <Card>
+                    <CardContent>
+                        <WorkoutHistoryTable instances={instances} all />
                     </CardContent>
                 </Card>
             </div>

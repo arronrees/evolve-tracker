@@ -20,6 +20,11 @@ class WorkoutInstance extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function workout(): BelongsTo
+    {
+        return $this->belongsTo(Workout::class);
+    }
+
     public function exercises(): HasMany
     {
         return $this->hasMany(WorkoutExerciseInstance::class)->orderBy('order');
