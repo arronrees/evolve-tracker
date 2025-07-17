@@ -81,6 +81,8 @@ class WorkoutInstanceController extends Controller
                         'exercise_id' => $exerciseData['exercise_id'],
                         'user_id' => $request->user()->id,
                         'order' => $exerciseData['order'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ];
                 }
 
@@ -105,6 +107,8 @@ class WorkoutInstanceController extends Controller
                             'duration_seconds' => $setData['duration_seconds'] ?? null,
                             'distance_meters' => $setData['distance_meters'] ?? null,
                             'rest_seconds' => $setData['rest_seconds'] ?? null,
+                            'created_at' => now(),
+                            'updated_at' => now(),
                         ];
                     }
                 }

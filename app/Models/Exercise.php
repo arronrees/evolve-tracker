@@ -21,4 +21,14 @@ class Exercise extends Model
     {
         return $this->belongsToMany(MuscleGroup::class);
     }
+
+    public function workoutExercises()
+    {
+        return $this->hasMany(WorkoutExercise::class);
+    }
+
+    public function workoutExerciseInstances()
+    {
+        return $this->hasMany(WorkoutExerciseInstance::class);
+    }
 }

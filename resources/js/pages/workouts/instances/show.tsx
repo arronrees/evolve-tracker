@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import WorkoutInstanceTable from '@/components/workouts/WorkoutInstanceTable';
 import AppLayout from '@/layouts/app-layout';
+import { mapBreadcrumbs } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import { Workout, WorkoutInstance } from '@/types/workouts';
 import { Head, Link } from '@inertiajs/react';
@@ -17,6 +18,18 @@ const breadcrumbs: BreadcrumbItem[] = [
         title: 'Workouts',
         href: '/workouts',
     },
+    {
+        title: '{name}',
+        href: '/workouts/{id}',
+    },
+    {
+        title: 'History',
+        href: '/workouts/{id}/history',
+    },
+    {
+        title: '{date}',
+        href: '/workouts/{id}/history/{instance_id}',
+    },
 ];
 
 interface Props {
@@ -26,7 +39,19 @@ interface Props {
 
 export default function ShowWorkoutInstance({ workout, instance }: Props) {
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayout
+            breadcrumbs={mapBreadcrumbs(
+                breadcrumbs,
+                [
+                    { find: '{id}', replace: workout.id.toString() },
+                    { find: '{instance_id}', replace: instance.id.toString() },
+                ],
+                [
+                    { find: '{name}', replace: workout.name },
+                    { find: '{date}', replace: new Date(instance.created_at).toDateString() },
+                ],
+            )}
+        >
             <Head title={`Workout Instance - ${workout.name}`} />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto p-4">

@@ -17,6 +17,10 @@ const breadcrumbs: BreadcrumbItem[] = [
         title: 'Workouts',
         href: '/workouts',
     },
+    {
+        title: 'History',
+        href: '/workouts/history',
+    },
 ];
 
 interface Props {

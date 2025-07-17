@@ -22,7 +22,7 @@ class WorkoutExerciseInstance extends Model
 
     public function workout(): BelongsTo
     {
-        return $this->belongsTo(WorkoutInstance::class);
+        return $this->belongsTo(WorkoutInstance::class, 'workout_instance_id');
     }
 
     public function exercise(): BelongsTo

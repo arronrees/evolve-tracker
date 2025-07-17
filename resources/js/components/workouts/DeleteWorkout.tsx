@@ -23,7 +23,9 @@ export default function DeleteWorkout({ workoutId }: { workoutId: number }) {
         <div>
             <Dialog>
                 <DialogTrigger asChild>
-                    <Button variant="destructive">Delete workout</Button>
+                    <Button variant="destructive" size="sm">
+                        Delete workout
+                    </Button>
                 </DialogTrigger>
                 <DialogContent>
                     <DialogTitle>Are you sure you want to delete this workout?</DialogTitle>
@@ -37,7 +39,7 @@ export default function DeleteWorkout({ workoutId }: { workoutId: number }) {
                             </DialogClose>
 
                             <Button variant="destructive" disabled={processing} asChild>
-                                <button type="submit">Delete account</button>
+                                <button type="submit">Delete workout</button>
                             </Button>
                         </DialogFooter>
                     </form>

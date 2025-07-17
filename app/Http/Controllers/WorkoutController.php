@@ -71,6 +71,8 @@ class WorkoutController extends Controller
                         'exercise_id' => $exerciseData['exercise_id'],
                         'order' => $exerciseData['order'],
                         'notes' => $exerciseData['notes'] ?? null,
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ];
                 }
 
@@ -95,6 +97,8 @@ class WorkoutController extends Controller
                             'duration_seconds' => $setData['duration_seconds'] ?? null,
                             'distance_meters' => $setData['distance_meters'] ?? null,
                             'rest_seconds' => $setData['rest_seconds'] ?? null,
+                            'created_at' => now(),
+                            'updated_at' => now(),
                         ];
                     }
                 }
@@ -175,6 +179,8 @@ class WorkoutController extends Controller
                         'exercise_id' => $exerciseData['exercise_id'],
                         'order' => $exerciseData['order'],
                         'notes' => $exerciseData['notes'] ?? null,
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ];
                 }
 
@@ -199,6 +205,8 @@ class WorkoutController extends Controller
                             'duration_seconds' => $setData['duration_seconds'] ?? null,
                             'distance_meters' => $setData['distance_meters'] ?? null,
                             'rest_seconds' => $setData['rest_seconds'] ?? null,
+                            'created_at' => now(),
+                            'updated_at' => now(),
                         ];
                     }
                 }

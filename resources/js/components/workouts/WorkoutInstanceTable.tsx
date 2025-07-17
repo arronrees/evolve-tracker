@@ -21,16 +21,16 @@ export default function WorkoutInstanceTable({ instance }: { instance: WorkoutIn
                                 key={set.id}
                                 className={index === exercise.sets.length - 1 ? 'border-b-2 border-slate-200' : 'border-slate-100'}
                             >
-                                <TableCell className="py-5 font-medium">{index === 0 && exercise.exercise?.name}</TableCell>
-                                <TableCell className="py-5 text-muted-foreground">{index + 1}</TableCell>
-                                <TableCell className={`py-5 ${exercise.exercise.measurement === 'reps_only' ? 'font-medium' : ''}`}>
+                                <TableCell className="py-3.5 font-medium">{index === 0 && exercise.exercise?.name}</TableCell>
+                                <TableCell className="py-3.5 text-muted-foreground">{index + 1}</TableCell>
+                                <TableCell className={`py-3.5 ${exercise.exercise.measurement === 'reps_only' ? 'font-medium' : ''}`}>
                                     {exercise.exercise.measurement === 'time_or_distance' || exercise.exercise.measurement === 'time' ? (
                                         <span>-</span>
                                     ) : (
                                         set.reps
                                     )}
                                 </TableCell>
-                                <TableCell className="py-5 font-medium">
+                                <TableCell className="py-3.5 font-medium">
                                     {exercise.exercise.measurement === 'reps_only' ? (
                                         <span>-</span>
                                     ) : exercise.exercise.measurement === 'weight' ? (
