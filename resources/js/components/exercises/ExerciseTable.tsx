@@ -3,22 +3,28 @@ import { ExerciseHistory } from '@/pages/exercises';
 import ExerciseTableRow from './ExerciseTableRow';
 
 interface Props {
-    exercises: ExerciseHistory[];
+    exercise: ExerciseHistory;
 }
 
-export default function ExerciseTable({ exercises }: Props) {
+export default function ExerciseTable({ exercise }: Props) {
     return (
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Latest workout</TableHead>
-                    <TableHead>Previous workout</TableHead>
-                    <TableHead>PB</TableHead>
+                    <TableHead>Workout</TableHead>
+                    <TableHead>Reps</TableHead>
+                    <TableHead>Weight</TableHead>
+                    <TableHead>vs Previous</TableHead>
+                    <TableHead>vs Target</TableHead>
                     <TableHead></TableHead>
                 </TableRow>
             </TableHeader>
-            <TableBody>{exercises && exercises.map((exercise) => <ExerciseTableRow key={exercise.id} exercise={exercise} />)}</TableBody>
+            <TableBody>
+                {exercise.workout_exercise_instances &&
+                    exercise.workout_exercise_instances.map((instance, index) => (
+                        <ExerciseTableRow key={instance.id} instance={instance} exercise={exercise} index={index} />
+                    ))}
+            </TableBody>
         </Table>
     );
 }

@@ -36,6 +36,7 @@ export interface WorkoutExerciseInstance {
     order: number;
     sets: WorkoutExerciseSetInstance[];
     exercise: Exercise;
+    workout: WorkoutInstance;
 }
 
 export interface WorkoutExerciseSetInstance {

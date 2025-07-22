@@ -1,9 +1,10 @@
-import ExercisesTable from '@/components/exercises/ExercisesTable';
+import ExerciseTable from '@/components/exercises/ExerciseTable';
 import HeadingSmall from '@/components/heading-small';
 import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
+import { mapBreadcrumbs } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
-import { Exercise, WorkoutExerciseInstance } from '@/types/workouts';
+import { type Exercise, WorkoutExerciseInstance } from '@/types/workouts';
 import { Head } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -15,6 +16,10 @@ const breadcrumbs: BreadcrumbItem[] = [
         title: 'Exercises',
         href: '/exercises',
     },
+    {
+        title: '{name}',
+        href: '/exercises/{id}',
+    },
 ];
 
 export interface ExerciseHistory extends Exercise {
@@ -22,21 +27,27 @@ export interface ExerciseHistory extends Exercise {
 }
 
 interface Props {
-    exercises: ExerciseHistory[];
+    exercise: ExerciseHistory;
 }
 
-export default function Exercises({ exercises }: Props) {
+export default function Exercise({ exercise }: Props) {
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Exercises" />
+        <AppLayout
+            breadcrumbs={mapBreadcrumbs(
+                breadcrumbs,
+                [{ find: '{id}', replace: exercise.id.toString() }],
+                [{ find: '{name}', replace: exercise.name }],
+            )}
+        >
+            <Head title={exercise.name} />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto p-4">
                 <div className="flex flex-row items-center justify-between gap-2 px-2 pt-6 pb-2">
-                    <HeadingSmall title="Exercises" description="Here shows the progress of all the exercises you have performed." />
+                    <HeadingSmall title={exercise.name} description="Here shows the progress of this exercise." />
                 </div>
                 <Card>
                     <CardContent>
-                        <ExercisesTable exercises={exercises} />
+                        <ExerciseTable exercise={exercise} />
                     </CardContent>
                 </Card>
             </div>

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class WorkoutExerciseInstance extends Model
 {
     protected $fillable = [
-        'workout_id',
+        'workout_instance_id',
         'exercise_id',
         'user_id',
         'order',

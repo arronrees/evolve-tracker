@@ -28,4 +28,24 @@ class ExerciseController extends Controller
 
         return Inertia::render('exercises/index', ['exercises' => $exercises]);
     }
+
+    public function show(Request $request, Exercise $exercise)
+    {
+        $exercise->load(['workoutExerciseInstances' => function ($query) use ($request, $exercise) {
+            $query->where('user_id', $request->user()->id)->with([
+                'workout' =>  function ($instanceQuery) use ($exercise) {
+                    $instanceQuery->with(['workout' => function ($workoutQuery) use ($exercise) {
+                        $workoutQuery->with(['exercises' => function ($exQuery) use ($exercise) {
+                            $exQuery->where('exercise_id', $exercise->id)->with(['sets']);
+                        }]);
+                    }]);
+                },
+                'sets' => function ($setQuery) {
+                    $setQuery->orderBy('order');
+                },
+            ])->orderBy('created_at', 'desc');
+        }]);
+
+        return Inertia::render('exercises/show', ['exercise' => $exercise]);
+    }
 }
