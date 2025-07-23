@@ -2,21 +2,11 @@ import { SVGAttributes } from 'react';
 
 export default function AppLogoIcon(props: SVGAttributes<SVGElement>) {
     return (
-        <svg
-            {...props}
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-4 w-4"
-        >
-            <circle cx="12" cy="5" r="3" />
-            <path d="M6.5 8a2 2 0 0 0-1.905 1.46L2.1 18.5A2 2 0 0 0 4 21h16a2 2 0 0 0 1.925-2.54L19.4 9.5A2 2 0 0 0 17.48 8Z" />
+        <svg {...props} width="42" height="43" viewBox="0 0 42 43" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+                d="M19.2401 19.43C19.2401 19.874 19.2401 20.318 19.3141 20.688H25.1601C25.0861 14.99 24.0501 13.88 22.2741 13.88C20.3501 13.88 19.2401 15.36 19.2401 19.43ZM41.8841 23.204C41.8841 36.598 37.5921 42.74 23.3841 42.74C10.2861 42.74 0.518066 38.67 0.518066 21.502C0.518066 6.77599 6.58607 0.929993 22.2001 0.929993C37.3701 0.929993 41.9581 7.95999 41.9581 17.136C41.9581 18.616 41.9581 20.096 41.8841 21.724C36.1121 21.872 27.5281 21.724 19.4621 21.724C20.2021 25.794 23.3101 26.904 30.0441 26.904C38.0361 26.904 40.1821 25.72 40.0341 23.204H41.8841Z"
+                fill="current"
+            />
         </svg>
     );
 }
