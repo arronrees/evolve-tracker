@@ -2,6 +2,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 
 import HeadingSmall from '@/components/heading-small';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
@@ -60,9 +61,14 @@ export default function AdminExercises({ exercises }: Props) {
                             <li key={exercise.id} className="">
                                 <Link
                                     href={`/admin/exercises/${exercise.id}`}
-                                    className="block rounded bg-slate-50 p-2 transition hover:bg-slate-100 focus:bg-slate-100"
+                                    className="flex items-center gap-4 rounded bg-slate-50 p-2 transition hover:bg-slate-100 focus:bg-slate-100"
                                 >
-                                    {exercise.name}
+                                    <span>{exercise.name}</span>
+                                    <span>
+                                        {exercise.muscle_groups.map((muscleGroup) => (
+                                            <Badge key={muscleGroup.id}>{muscleGroup.name}</Badge>
+                                        ))}
+                                    </span>
                                 </Link>
                             </li>
                         ))}

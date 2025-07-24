@@ -13,6 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import { Exercise, MuscleGroup } from '@/types/workouts';
+import { Separator } from '@radix-ui/react-separator';
 import { ChevronsUpDown, XIcon } from 'lucide-react';
 import { FormEventHandler, useState } from 'react';
 
@@ -29,14 +30,19 @@ interface MuscleGroupForm {
     exercises?: { id: number; name: string }[];
 }
 
+interface MuscleGroupWithExercises extends MuscleGroup {
+    exercises: Exercise[];
+}
 interface Props {
-    muscleGroup: MuscleGroup;
+    muscleGroup: MuscleGroupWithExercises;
     exercises: Exercise[];
 }
 
 export default function AdminMuscleGroupShow({ muscleGroup, exercises }: Props) {
     const [open, setOpen] = useState<boolean>(false);
-    const [availableExercises, setAvailableExercises] = useState<Exercise[]>(exercises);
+    const [availableExercises, setAvailableExercises] = useState<Exercise[]>(
+        exercises.filter((ex) => !muscleGroup.exercises.some((me) => me.id === ex.id)),
+    );
 
     const { data, setData, put, errors } = useForm<Required<MuscleGroupForm>>({
         name: muscleGroup.name,
@@ -152,6 +158,20 @@ export default function AdminMuscleGroupShow({ muscleGroup, exercises }: Props) 
                             <Button type="submit">Save</Button>
                         </div>
                     </form>
+
+                    <Separator className="my-6" />
+
+                    <div>
+                        <HeadingSmall title="Exercises on this muscle group" description="View the exercises on this muscle group" />
+
+                        <ul className="mt-4 flex flex-col gap-1.5">
+                            {muscleGroup.exercises.map((exercise) => (
+                                <li key={exercise.id} className="block rounded bg-slate-50 p-2 transition">
+                                    {exercise.name}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
             </SettingsLayout>
         </AppLayout>

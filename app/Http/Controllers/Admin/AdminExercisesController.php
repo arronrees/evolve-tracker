@@ -12,7 +12,7 @@ class AdminExercisesController extends Controller
 {
     public function index()
     {
-        $exercises = Exercise::orderBy('name', 'asc')->get();
+        $exercises = Exercise::with('muscleGroups')->orderBy('name', 'asc')->get();
 
         return Inertia::render('admin/exercises/index', ['exercises' => $exercises]);
     }

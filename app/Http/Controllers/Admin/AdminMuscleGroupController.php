@@ -37,6 +37,7 @@ class AdminMuscleGroupController extends Controller
 
   public function show(MuscleGroup $muscleGroup)
   {
+    $muscleGroup->load(['exercises']);
     $exercises = Exercise::orderBy('name', 'asc')->get();
 
     return Inertia::render('admin/muscle-groups/show', ['muscleGroup' => $muscleGroup, 'exercises' => $exercises]);
