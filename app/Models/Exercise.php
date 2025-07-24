@@ -19,7 +19,7 @@ class Exercise extends Model
 
     public function muscleGroups()
     {
-        return $this->belongsToMany(MuscleGroup::class);
+        return $this->belongsToMany(MuscleGroup::class, 'exercise_muscle_groups');
     }
 
     public function workoutExercises()

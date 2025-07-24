@@ -16,4 +16,5 @@ require __DIR__ . '/settings.php';
 require __DIR__ . '/workouts.php';
 require __DIR__ . '/exercises.php';
 require __DIR__ . '/friends.php';
+require __DIR__ . '/admin.php';
 require __DIR__ . '/auth.php';

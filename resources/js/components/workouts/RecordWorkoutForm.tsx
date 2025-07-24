@@ -42,8 +42,6 @@ export default function RecordWorkoutForm({ workout, exercises, muscleGroups }: 
         })),
     });
 
-    console.log(errors);
-
     const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
         post(route('workouts.instances.store', workout.id));
