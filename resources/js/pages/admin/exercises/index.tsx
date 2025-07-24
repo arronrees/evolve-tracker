@@ -64,7 +64,7 @@ export default function AdminExercises({ exercises }: Props) {
                                     className="flex items-center gap-4 rounded bg-slate-50 p-2 transition hover:bg-slate-100 focus:bg-slate-100"
                                 >
                                     <span>{exercise.name}</span>
-                                    <span>
+                                    <span className="flex items-center gap-2">
                                         {exercise.muscle_groups.map((muscleGroup) => (
                                             <Badge key={muscleGroup.id}>{muscleGroup.name}</Badge>
                                         ))}
