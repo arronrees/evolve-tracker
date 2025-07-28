@@ -13,14 +13,22 @@ class DashboardController extends Controller
      */
     public function __invoke(Request $request)
     {
+        $userId = $request->user()->id;
+
         $weight = WorkoutSetInstance::whereNotNull('weight')
             ->whereNotNull('reps')
-            ->selectRaw('SUM(weight * reps) as total_volume')
+            ->join('workout_exercise_instances', 'workout_set_instances.workout_exercise_instance_id', '=', 'workout_exercise_instances.id')
+            ->where('workout_exercise_instances.user_id', $userId)
+            ->selectRaw('SUM(workout_set_instances.weight * workout_set_instances.reps) as total_volume')
             ->value('total_volume');
 
-        $sets = WorkoutSetInstance::count();
+        $sets = WorkoutSetInstance::join('workout_exercise_instances', 'workout_set_instances.workout_exercise_instance_id', '=', 'workout_exercise_instances.id')
+            ->where('workout_exercise_instances.user_id', $userId)
+            ->count();
 
-        $reps = WorkoutSetInstance::sum('reps');
+        $reps = WorkoutSetInstance::join('workout_exercise_instances', 'workout_set_instances.workout_exercise_instance_id', '=', 'workout_exercise_instances.id')
+            ->where('workout_exercise_instances.user_id', $userId)
+            ->sum('workout_set_instances.reps');
 
         return Inertia::render('dashboard', ['weight' => $weight, 'sets' => $sets, 'reps' => $reps]);
     }
