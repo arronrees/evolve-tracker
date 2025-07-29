@@ -7,6 +7,7 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
@@ -23,6 +24,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 interface ExerciseForm {
     name: string;
     description: string | null;
+    measurement: 'reps_only' | 'weight' | 'time' | 'distance' | 'time_or_distance';
 }
 
 interface Props {
@@ -33,6 +35,7 @@ export default function AdminExerciseShow({ exercise }: Props) {
     const { data, setData, put, errors } = useForm<Required<ExerciseForm>>({
         name: exercise.name,
         description: exercise.description,
+        measurement: exercise.measurement,
     });
 
     const submit: FormEventHandler = (e) => {
@@ -61,6 +64,30 @@ export default function AdminExerciseShow({ exercise }: Props) {
                                 required
                                 placeholder="Exercise name"
                             />
+
+                            <InputError className="mt-2" message={errors.name} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="measurement">Measurement</Label>
+
+                            <Select
+                                onValueChange={(value) =>
+                                    setData('measurement', value as 'reps_only' | 'weight' | 'time' | 'distance' | 'time_or_distance')
+                                }
+                                value={data.measurement}
+                            >
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select measurement" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="reps_only">Reps Only</SelectItem>
+                                    <SelectItem value="weight">Weight</SelectItem>
+                                    <SelectItem value="time">Time</SelectItem>
+                                    <SelectItem value="distance">Distance</SelectItem>
+                                    <SelectItem value="time_or_distance">Time or Distance</SelectItem>
+                                </SelectContent>
+                            </Select>
 
                             <InputError className="mt-2" message={errors.name} />
                         </div>
