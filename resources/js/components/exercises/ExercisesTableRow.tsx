@@ -33,7 +33,7 @@ export default function ExercisesTableRow({ exercise }: Props) {
             <TableCell className="py-3.5">
                 <span className="flex items-center gap-1.5 text-sm">
                     <span className="font-semibold">{exercise.measurement === 'weight' ? `${latestWeight}kg` : '-'}</span>
-                    {Number(percentageDifference) ? (
+                    {Number(percentageDifference) && isFinite(percentageDifference) ? (
                         Number(percentageDifference) > 0 ? (
                             <span className="rounded bg-green-100 px-1.5 py-1 text-green-900">+{Number(percentageDifference).toFixed(2)}%</span>
                         ) : (

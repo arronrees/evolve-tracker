@@ -57,7 +57,7 @@ export default function ExerciseTableRow({ instance, exercise, index }: Props) {
             </TableCell>
             <TableCell className="py-3.5">
                 <span className="text-xs">
-                    {Number(percentageDifferenceFromPrevious) ? (
+                    {Number(percentageDifferenceFromPrevious) && isFinite(percentageDifferenceFromPrevious ?? 0) ? (
                         Number(percentageDifferenceFromPrevious) > 0 ? (
                             <span className="rounded bg-green-100 px-1.5 py-1 text-green-900">
                                 +{Number(percentageDifferenceFromPrevious).toFixed(2)}%
